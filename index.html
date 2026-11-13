@@ -180,15 +180,28 @@
     </div>
   </div>
 
-  <script>
-    const CORRECT_PASSWORD = "skola2026";
-    const GRADE_PASSWORDS = {
-      "5": "heslo5",
-      "6": "heslo6",
-      "7": "heslo7",
-      "8": "heslo8",
-      "9": "heslo9"
+<script>
+    // ==========================================
+    // ZAHASOVANÉ HESLÁ (SHA-256)
+    // 
+    // Aktuálne nastavené heslá v tomto kóde:
+    // Hlavné heslo: "skola2026"
+    // Heslo pre 5. ročník: "heslo5"
+    // Heslo pre 6. ročník: "heslo6"
+    // Heslo pre 7. ročník: "heslo7"
+    // Heslo pre 8. ročník: "heslo8"
+    // Heslo pre 9. ročník: "heslo9"
+    // ==========================================
+    const CORRECT_PASSWORD_HASH = "8227b680780281b3793f0b2f5d601b315414ab2612745cf548c0847f96ea5b91";
+
+    const GRADE_PASSWORD_HASHES = {
+      "5": "3fa0556276722ae3923d6a26df89d81647e30d1aa17f8a7ad148446c7ccb8ff3",
+      "6": "c882a7f5ea4e840a233636f332ee4e9f5e3e2304918e9d9e29a59e99a22f311c",
+      "7": "098dcf6697a229a531e21b0337852a36d9d431057e0344d5c92c9066bf917f84",
+      "8": "a79cb79e73111f924df3216d7fb13768e1c66b5774a38e888631bfa283d5a497",
+      "9": "86bc33a763acffc8bc05bf8b8493158097b3992b45cf5777df4c9441f99c8fc4"
     };
+    // ==========================================
 
     let selectedGrade = null;
 
