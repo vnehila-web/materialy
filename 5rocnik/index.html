@@ -18,6 +18,10 @@
     .file-name { font-weight: 500; }
     .file-btn { background: #2F5D3F; color: white; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; }
     .empty { padding: 30px 20px; color: #888; text-align: center; }
+    /* Ak .zoznam-suborov obsahuje prvok .back, tak .empty skryje */
+    .zoznam-suborov:has(.back) .empty {
+    display: none;
+}
   </style>
 </head>
 <body>
