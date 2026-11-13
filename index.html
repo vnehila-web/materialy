@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materiály pre žiakov</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f6f8;
+      color: #1a1f1c;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 40px 36px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="password"]:focus {
+      border-color: #2F5D3F;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #2F5D3F;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #264C32;
+    }
+    .error {
+      color: #c0392b;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    #content, #grade-modal {
+      display: none;
+    }
+    .grades {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .grade-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #f0f4f1;
+      color: #1a1f1c;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      cursor: pointer;
+      text-align: center;
+    }
+    .grade-btn:hover {
+      background: #2F5D3F;
+      color: white;
+    }
+    .logout {
+      margin-top: 24px;
+      background: #eee;
+      color: #555;
+      font-size: 0.9rem;
+    }
+    .logout:hover {
+      background: #ddd;
+      color: #1a1f1c;
+    }
+    .btn-secondary {
+      background: #eee;
+      color: #555;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover {
+      background: #ddd;
+      color: #1a1f1c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Prvá obrazovka: Zadanie hlavného hesla -->
+    <div id="login-box">
+      <h1>Materiály pre žiakov INF</h1>
+      <p class="subtitle">Zadaj heslo pre vstup</p>
+      <input type="password" id="password" placeholder="Heslo" autofocus>
+      <button onclick="checkMainPassword()">Vstúpiť</button>
+      <p class="error" id="error">Nesprávne heslo</p>
+    </div>
+
+    <!-- Druhá obrazovka: Výber ročníkov (tvoje pôvodné tlačidlá) -->
+    <div id="content">
+      <h1>Vyber ročník</h1>
+      <p class="subtitle">Materiály na stiahnutie</p>
+      <div class="grades">
+        <button class="grade-btn" onclick="openGrade('5')">5. ročník</button>
+        <button class="grade-btn" onclick="openGrade('6')">6. ročník</button>
+        <button class="grade-btn" onclick="openGrade('7')">7. ročník</button>
+        <button class="grade-btn" onclick="openGrade('8')">8. ročník</button>
+        <button class="grade-btn" onclick="openGrade('9')">9. ročník</button>
+      </div>
+      <button class="logout grade-btn" onclick="logout()">Odhlásiť sa</button>
+    </div>
+
+    <!-- Tretia obrazovka / Skryté okno pre bodkované heslo ročníka -->
+    <div id="grade-modal">
+      <h1 id="modal-title">Zadaj heslo</h1>
+      <p class="subtitle">Vstup do materiálov</p>
+      <input type="password" id="grade-password" placeholder="Heslo pre ročník">
+      <button onclick="confirmGradePassword()">Potvrdiť</button>
+      <button class="btn-secondary grade-btn" onclick="closeGradeModal()">Zrušiť</button>
+      <p class="error" id="grade-error">Nesprávne heslo ročníka</p>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. HLAVNÉ HESLO PRE VSTUP NA STRÁNKU
+    const CORRECT_PASSWORD = "skola2026";
+
+    // 2. HESLÁ PRE JEDNOTLIVÉ ROČNÍKY
+    const GRADE_PASSWORDS = {
+      "5": "heslo5",
+      "6": "heslo6",
+      "7": "heslo7",
+      "8": "heslo8",
+      "9": "heslo9"
+    };
+    // ==========================================
+
+    let selectedGrade = null;
+
+    function checkMainPassword() {
+      const input = document.getElementById("password").value;
+      if (input === CORRECT_PASSWORD) {
+        sessionStorage.setItem("mainLoggedIn", "true");
+        showContent();
+      } else {
+        document.getElementById("error").style.display = "block";
+        document.getElementById("password").value = "";
+      }
+    }
+
+    function showContent() {
+      document.getElementById("login-box").style.display = "none";
+      document.getElementById("grade-modal").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    }
+
+    function openGrade(rocnik) {
+      const sessionKey = `gradeLoggedIn_${rocnik}`;
+
+      // Ak už je žiak pre tento ročník v tejto relácii overený, pustíme ho rovno
+      if (sessionStorage.getItem(sessionKey) === "true") {
+        window.location.href = `${rocnik}rocnik/`;
+        return;
+      }
+
+      selectedGrade = rocnik;
+      document.getElementById("modal-title").textContent = `${rocnik}. ročník`;
+      document.getElementById("grade-password").value = "";
+      document.getElementById("grade-error").style.display = "none";
+      
+      // Skryjeme zoznam ročníkov a ukážeme bodkované pole pre heslo ročníka
+      document.getElementById("content").style.display = "none";
+      document.getElementById("grade-modal").style.display = "block";
+      document.getElementById("grade-password").focus();
+    }
+
+    function confirmGradePassword() {
+      const input = document.getElementById("grade-password").value;
+      const correctGradePassword = GRADE_PASSWORDS[selectedGrade];
+
+      if (input === correctGradePassword) {
+        sessionStorage.setItem(`gradeLoggedIn_${selectedGrade}`, "true");
+        window.location.href = `${selectedGrade}rocnik/`;
+      } else {
+        document.getElementById("grade-error").style.display = "block";
+        document.getElementById("grade-password").value = "";
+      }
+    }
+
+    function closeGradeModal() {
+      document.getElementById("grade-modal").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    // Automatické preskočenie hlavného prihlásenia, ak už bolo zadané
+    if (sessionStorage.getItem("mainLoggedIn") === "true") {
+      showContent();
+    }
+
+    // Podpora pre stlačenie Enter v hlavnom poli
+    document.getElementById("password").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") checkMainPassword();
+    });
+
+    // Podpora pre stlačenie Enter v poli pre ročník
+    document.getElementById("grade-password").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") confirmGradePassword();
+    });
+  </script>
+
+</body>
+</html>
