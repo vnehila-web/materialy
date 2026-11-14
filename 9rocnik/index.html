@@ -132,13 +132,13 @@
     // Overenie prihlásenia pre 9. ročník
     if (sessionStorage.getItem("gradeLoggedIn_9") !== "true") {
       window.location.href = "../rocniky.html";
-    }
+      }
 
     function logout() {
       // Vymaže iba overenie pre tento ročník a vráti na výber ročníkov
       sessionStorage.removeItem("gradeLoggedIn_9");
       window.location.href = "../rocniky.html";
-    }
+      }
 
     // Automatické zisťovanie veľkosti súborov
     document.addEventListener("DOMContentLoaded", () => {
