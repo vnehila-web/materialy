@@ -100,34 +100,38 @@
     <p class="subtitle">Materiály na stiahnutie</p>
 
     <div class="file-list">
-      <a href="1.Bezpecnost_prace_na_PC.pptx" class="file-card" download>
+      <!-- 
+        Do data-file napíš presný názov súboru v danom priečinku.
+        Kód sám zistí jeho aktuálnu veľkosť a zapíše ju namiesto textu "Načítavam..."
+      -->
+      <a href="1.Bezpecnost_prace_na_PC.pptx" class="file-card" download data-file="1.Bezpecnost_prace_na_PC.pptx">
         <span class="file-icon">📊</span>
         <span class="file-name">Bezpecnost_prace_na_PC</span>
-        <span class="file-size">259 KB</span>
+        <span class="file-size">Načítavam...</span>
       </a>
 
-      <a href="2.Virusy.pptx" class="file-card" download>
+      <a href="2.Virusy.pptx" class="file-card" download data-file="2.Virusy.pptx">
         <span class="file-icon">📊</span>
         <span class="file-name">Virusy</span>
-        <span class="file-size">36 KB</span>
+        <span class="file-size">Načítavam...</span>
       </a>
-
-      <a href="3.Legalnost_softveru.pptx" class="file-card" download>
+    
+     <a href="3.Legalnost_softveru.pptx" class="file-card" download data-file="3.Legalnost_softveru.pptx">
         <span class="file-icon">📊</span>
         <span class="file-name">Legalnost_softveru</span>
-        <span class="file-size">223 KB</span>
+        <span class="file-size">Načítavam...</span>
       </a>
 
-      <a href="4.- 5.formatovanie.xls" class="file-card" download>
+      <a href="4.- 5.formatovanie.xls" class="file-card" download data-file="4.- 5.formatovanie.xls">
         <span class="file-icon">📊</span>
-        <span class="file-name">EXCEL - 4.- 5.formatovanie</span>
-        <span class="file-size">226 KB</span>
+        <span class="file-name">EXCEL - 4. - 5.formatovanie</span>
+        <span class="file-size">Načítavam...</span>
       </a>
-
-      <a href="6.bunky_formaty_vzorce.xlsx" class="file-card" download>
+      
+      <a href="6.bunky_formaty_vzorce.xlsx" class="file-card" download data-file="6.bunky_formaty_vzorce.xlsx">
         <span class="file-icon">📊</span>
-        <span class="file-name">Bunky_formaty_vzorce</span>
-        <span class="file-size">199 KB</span>
+        <span class="file-name">EXCEL - bunky_formaty_vzorce</span>
+        <span class="file-size">Načítavam...</span>
       </a>
     </div>
 
@@ -135,14 +139,53 @@
   </div>
 
   <script>
-    // Kontrola, či bol prístup do 6. ročníka overený
+    // Overenie prihlásenia
     if (sessionStorage.getItem("mainLoggedIn") !== "true" || sessionStorage.getItem("gradeLoggedIn_6") !== "true") {
-      window.location.href = "../"; // Presmerovanie na hlavnú stránku, ak nie je prihlásený
+      window.location.href = "../";
     }
 
     function logout() {
       sessionStorage.clear();
-      window.location.href = "../"; // Presmerovanie na hlavnú úvodnú stránku
+      window.location.href = "../";
+    }
+
+    // Automatické zisťovanie veľkosti súborov
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll(".file-card");
+
+      cards.forEach(async (card) => {
+        const fileName = card.getAttribute("data-file");
+        const sizeSpan = card.querySelector(".file-size");
+
+        if (!fileName) return;
+
+        try {
+          // Požiadavka HEAD načíta len hlavičky bez sťahovania celého súboru
+          const response = await fetch(fileName, { method: "HEAD" });
+          if (response.ok) {
+            const bytes = response.headers.get("content-length");
+            if (bytes) {
+              sizeSpan.textContent = formatBytes(parseInt(bytes, 10));
+            } else {
+              sizeSpan.textContent = "";
+            }
+          } else {
+            sizeSpan.textContent = "";
+          }
+        } catch (error) {
+          // Pri lokálnom otváraní bez web servera (file:///) prehliadače blokujú fetch requesty
+          sizeSpan.textContent = "";
+        }
+      });
+    });
+
+    // Funkcia na formátovanie bajtov na KB / MB
+    function formatBytes(bytes) {
+      if (bytes === 0) return "0 B";
+      const k = 1024;
+      const sizes = ["B", "KB", "MB", "GB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
     }
   </script>
 </body>
