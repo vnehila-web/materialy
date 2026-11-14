@@ -182,16 +182,18 @@
 
   <script>
     // ==========================================
-    // HLAVNÉ HESLO A HESLÁ PRE ROČNÍKY
+    // ZAKÓDOVANÉ HESLÁ (Base64)
+    // Pôvodné hesla: 
+    // Hlavné: skola2026 | Ročníky: heslo5 až heslo9
     // ==========================================
-    const CORRECT_PASSWORD = "skola2026";
+    const CORRECT_PASSWORD_B64 = "c2tvbGEyMDI2";
 
-    const GRADE_PASSWORDS = {
-      "5": "heslo5",
-      "6": "heslo6",
-      "7": "heslo7",
-      "8": "heslo8",
-      "9": "heslo9"
+    const GRADE_PASSWORD_B64 = {
+      "5": "aGVzbG81",
+      "6": "aGVzbG82",
+      "7": "aGVzbG83",
+      "8": "aGVzbG84",
+      "9": "aGVzbG85"
     };
     // ==========================================
 
@@ -210,7 +212,8 @@
 
     function checkMainPassword() {
       const input = document.getElementById("password").value;
-      if (input === CORRECT_PASSWORD) {
+      // Zakódujeme to, čo napísal používateľ, a porovnáme s uloženým kódom
+      if (btoa(input) === CORRECT_PASSWORD_B64) {
         sessionStorage.setItem("mainLoggedIn", "true");
         showContent();
       } else {
@@ -245,9 +248,9 @@
 
     function confirmGradePassword() {
       const input = document.getElementById("grade-password").value;
-      const correctGradePassword = GRADE_PASSWORDS[selectedGrade];
+      const correctB64 = GRADE_PASSWORD_B64[selectedGrade];
 
-      if (input === correctGradePassword) {
+      if (btoa(input) === correctB64) {
         sessionStorage.setItem(`gradeLoggedIn_${selectedGrade}`, "true");
         window.location.href = `${selectedGrade}rocnik/`;
       } else {
