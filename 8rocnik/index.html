@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>8. ročník - Materiály pre žiakov</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background: #f4f6f8;
@@ -98,7 +94,6 @@
   <div class="container">
     <h1>8. ročník</h1>
     <p class="subtitle">Materiály na stiahnutie</p>
-
     <div class="file-list">
       <!-- 
         Do data-file napíš presný názov súboru v danom priečinku.
@@ -127,21 +122,20 @@
         <span class="file-name">EXCEL - zakladne_pojmy_a_bunky</span>
         <span class="file-size">Načítavam...</span>
       </a>
-
-    </div> 
-
-    <button class="logout" onclick="logout()">Odhlásiť sa / Späť na úvod</button>
+    </div>
+    <button class="logout" onclick="logout()">Späť na výber ročníkov</button>
   </div>
 
-<script>
-    // Overenie prihlásenia
-    if (sessionStorage.getItem("mainLoggedIn") !== "true" || sessionStorage.getItem("gradeLoggedIn_8") !== "true") {
-      window.location.href = "../";
+  <script>
+    // Overenie prihlásenia pre 6. ročník
+    if (sessionStorage.getItem("gradeLoggedIn_8") !== "true") {
+      window.location.href = "../rocniky.html";
     }
 
     function logout() {
-      sessionStorage.clear();
-      window.location.href = "../";
+      // Vymaže iba overenie pre tento ročník a vráti na výber ročníkov
+      sessionStorage.removeItem("gradeLoggedIn_8");
+      window.location.href = "../rocniky.html";
     }
 
     // Automatické zisťovanie veľkosti súborov
@@ -155,7 +149,6 @@
         if (!fileName) return;
 
         try {
-          // Požiadavka HEAD načíta len hlavičky bez sťahovania celého súboru
           const response = await fetch(fileName, { method: "HEAD" });
           if (response.ok) {
             const bytes = response.headers.get("content-length");
@@ -168,13 +161,11 @@
             sizeSpan.textContent = "";
           }
         } catch (error) {
-          // Pri lokálnom otváraní bez web servera (file:///) prehliadače blokujú fetch requesty
           sizeSpan.textContent = "";
         }
       });
     });
 
-    // Funkcia na formátovanie bajtov na KB / MB
     function formatBytes(bytes) {
       if (bytes === 0) return "0 B";
       const k = 1024;
