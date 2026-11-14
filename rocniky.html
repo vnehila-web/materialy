@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Výber ročníka - Materiály pre žiakov</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f6f8;
+      color: #1a1f1c;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 40px 36px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+    .password-group {
+      position: relative;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+    .password-group input {
+      width: 100%;
+      padding: 14px 45px 14px 16px;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .password-group input:focus {
+      border-color: #2F5D3F;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 4px;
+      color: #666;
+      width: auto;
+    }
+    button, .action-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #2F5D3F;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover, .action-btn:hover {
+      background: #264C32;
+    }
+    .error {
+      color: #c0392b;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    #grade-modal {
+      display: none;
+    }
+    .grades {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .grade-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #f0f4f1;
+      color: #1a1f1c;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      cursor: pointer;
+      text-align: center;
+    }
+    .grade-btn:hover {
+      background: #2F5D3F;
+      color: white;
+    }
+    .back-home {
+      margin-top: 24px;
+      background: #eee;
+      color: #555;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .back-home:hover {
+      background: #ddd;
+      color: #1a1f1c;
+    }
+    .btn-secondary {
+      background: #eee;
+      color: #555;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover {
+      background: #ddd;
+      color: #1a1f1c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- 1. Zoznam ročníkov -->
+    <div id="content">
+      <h1>Vyber ročník</h1>
+      <p class="subtitle">Materiály na stiahnutie</p>
+      <div class="grades">
+        <button class="grade-btn" onclick="openGrade('5')">5. ročník</button>
+        <button class="grade-btn" onclick="openGrade('6')">6. ročník</button>
+        <button class="grade-btn" onclick="openGrade('7')">7. ročník</button>
+        <button class="grade-btn" onclick="openGrade('8')">8. ročník</button>
+        <button class="grade-btn" onclick="openGrade('9')">9. ročník</button>
+      </div>
+      <a href="index.html" class="back-home grade-btn">Späť na úvodnú stránku</a>
+    </div>
+
+    <!-- 2. Okno pre heslo ročníka -->
+    <div id="grade-modal">
+      <h1 id="modal-title">Zadaj heslo</h1>
+      <p class="subtitle">Vstup do materiálov</p>
+      
+      <div class="password-group">
+        <input type="password" id="grade-password" placeholder="Heslo pre ročník">
+        <button type="button" class="toggle-password" onclick="togglePassword('grade-password', this)">👁️</button>
+      </div>
+
+      <button onclick="confirmGradePassword()">Potvrdiť</button>
+      <button class="btn-secondary grade-btn" onclick="closeGradeModal()">Zrušiť</button>
+      <p class="error" id="grade-error">Nesprávne heslo ročníka</p>
+    </div>
+  </div>
+
+  <script>
+    // Base64 heslá pre ročníky (heslo5 až heslo9)
+    const GRADE_PASSWORD_B64 = {
+      "5": "aGVzbG81",
+      "6": "aGVzbG82",
+      "7": "aGVzbG83",
+      "8": "aGVzbG84",
+      "9": "aGVzbG85"
+    };
+
+    let selectedGrade = null;
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
+      } else {
+        input.type = "password";
+        btn.textContent = "👁️";
+      }
+    }
+
+    function openGrade(rocnik) {
+      const sessionKey = `gradeLoggedIn_${rocnik}`;
+
+      if (sessionStorage.getItem(sessionKey) === "true") {
+        window.location.href = `${rocnik}rocnik/`;
+        return;
+      }
+
+      selectedGrade = rocnik;
+      document.getElementById("modal-title").textContent = `${rocnik}. ročník`;
+      document.getElementById("grade-password").value = "";
+      document.getElementById("grade-error").style.display = "none";
+      
+      document.getElementById("content").style.display = "none";
+      document.getElementById("grade-modal").style.display = "block";
+      document.getElementById("grade-password").focus();
+    }
+
+    function confirmGradePassword() {
+      const input = document.getElementById("grade-password").value;
+      const correctB64 = GRADE_PASSWORD_B64[selectedGrade];
+
+      if (btoa(input) === correctB64) {
+        sessionStorage.setItem(`gradeLoggedIn_${selectedGrade}`, "true");
+        window.location.href = `${selectedGrade}rocnik/`;
+      } else {
+        document.getElementById("grade-error").style.display = "block";
+        document.getElementById("grade-password").value = "";
+      }
+    }
+
+    function closeGradeModal() {
+      document.getElementById("grade-modal").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    }
+
+    document.getElementById("grade-password").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") confirmGradePassword();
+    });
+  </script>
+
+</body>
+</html>
